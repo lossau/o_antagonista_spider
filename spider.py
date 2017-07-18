@@ -1,4 +1,5 @@
 import json
+import datetime
 import scrapy
 
 
@@ -14,12 +15,16 @@ class OAntagonistaSpider(scrapy.Spider):
     def parse(self, response):
 
         for post in response.css('article.post'):
+
+            post_date = post.css('time ::text').extract_first()
+            post_date = datetime.datetime.strptime(post_date, '%d.%m.%y').strftime('%d/%m/%y')
+
             self.blog_posts.append({
                 'id': post.css('article.post ::attr(id)').extract_first(),
                 'title': post.css('a ::text').extract_first(),
                 'summary': post.css('p ::text').extract_first(),
                 'time': post.css('span ::text')[4].extract().strip(),
-                'date': post.css('time ::text').extract_first(),
+                'date': post_date,
                 'page': self.current_page})
 
         with open('posts.json', 'w+') as f:

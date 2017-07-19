@@ -28,12 +28,12 @@ class OAntagonistaSpider(scrapy.Spider):
                 post_time = ''
 
             self.posts.append({
-                'id': post.css('article.post ::attr(id)').extract_first(),
-                'title': post.css('a ::text').extract_first(),
-                'summary': post.css('p ::text').extract_first(),
+                'id': post.css('article.post ::attr(id)').extract_first() or '',
+                'title': post.css('a ::text').extract_first() or '',
+                'summary': post.css('p ::text').extract_first() or '',
                 'time': post_time,
                 'date': post_date,
-                'page': self.current_page})
+                'page': str(self.current_page)})
 
         with open('posts.json', 'w+') as f:
             try:

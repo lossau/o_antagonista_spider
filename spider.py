@@ -4,6 +4,7 @@ import scrapy
 
 
 class OAntagonistaSpider(scrapy.Spider):
+
     name = 'o_antagonista'
     base_url = 'http://www.oantagonista.com/pagina/%s'
     current_page = 1
@@ -42,19 +43,16 @@ class OAntagonistaSpider(scrapy.Spider):
                 'page': str(self.current_page)
             })
 
-        # todo: consertar a escrita
-        # nao adiciona posts novos ao velhos
-        with open('posts.json', 'w+') as f:
+        with open('posts.json', 'r+') as f:
             try:
                 posts_file = f.read()
-                print '----------------------------------'
-                print posts_file
+                f.seek(0)
+                f.truncate(0)
                 existing_posts = json.loads(posts_file)
             except Exception as e:
-                print '----------------------------------'
-                print e
                 existing_posts = []
-            f.write(json.dumps(existing_posts + self.posts, ensure_ascii=False).encode('utf8'))
+            write_posts = existing_posts + self.posts
+            f.write(json.dumps(write_posts, ensure_ascii=False).encode('utf8'))
 
         if self.current_page < self.last_page:
             self.current_page = self.current_page + 1
